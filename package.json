@@ -1,0 +1,25 @@
+{
+  "name": "04.-npm",
+  "version": "1.0.0",
+  "description": "Learn NPM",
+  "homepage": "https://github.com/rioalifian12/BootcampBatch13-Geeksfarm-Rio#readme",
+  "bugs": {
+    "url": "https://github.com/rioalifian12/BootcampBatch13-Geeksfarm-Rio/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rioalifian12/BootcampBatch13-Geeksfarm-Rio.git"
+  },
+  "license": "ISC",
+  "author": "Rio Alifian Santoso",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "fol": "ls",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "validator": "^13.12.0"
+  }
+}
