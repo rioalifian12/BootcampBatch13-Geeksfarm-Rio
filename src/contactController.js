@@ -3,10 +3,15 @@ const validator = require("validator");
 
 const path = require("./createDir");
 
-// function untuk menyimpan contacts data kedalam file json
-const saveData = (data) => {
+const getData = () => {
   const file = fs.readFileSync(path.dataPath, "utf-8");
   const contacts = JSON.parse(file);
+  return contacts;
+};
+
+// function untuk menyimpan contacts data kedalam file json
+const saveData = (data) => {
+  const contacts = getData();
   const contactDetail = contacts.find((value) => value.name === data.name);
   const valPhone = validator.isMobilePhone(data.phone, ["id-ID"]);
   const valEmail = validator.isEmail(data.email);
@@ -75,13 +80,49 @@ const readDetailData = (name) => {
 
 // function untuk mengubah contacts data kedalam file json
 const updateData = (name, newName, newPhone, newEmail) => {
-  const file = fs.readFileSync(path.dataPath, "utf-8");
-  const contacts = JSON.parse(file);
+  const contacts = getData();
   const contactDetail = contacts.find((value) => value.name === name);
-  const data = { newName, newPhone, newEmail };
 
   if (!contactDetail) {
     return console.log("Data tidak ada!");
+  }
+
+  const data = { newName, newPhone, newEmail };
+
+  const valName = contactDetail.name === data.newName;
+  const valPhone = validator.isMobilePhone(data.newPhone, ["id-ID"]);
+  const valEmail = validator.isEmail(data.newEmail);
+
+  if (valName && !valPhone && !valEmail) {
+    return console.log(
+      "Name already exists, invalid phone number and invalid email, please try again!"
+    );
+  }
+  if (valName && !valPhone) {
+    return console.log(
+      "Name already exists and invalid phone number, please try again!"
+    );
+  }
+  if (valName && !valEmail) {
+    return console.log(
+      "Name already exists and invalid email, please try again!"
+    );
+  }
+  if (!valPhone && !valEmail) {
+    return console.log(
+      "Invalid phone exists and invalid email, please try again!"
+    );
+  }
+  if (valName) {
+    return console.log("Name already exists, please try again!");
+  }
+  if (!valPhone) {
+    return console.log("Invalid phone number, please try again!");
+  }
+  if (data.email !== "") {
+    if (!valEmail) {
+      return console.log("Invalid email, please try again!");
+    }
   }
 
   data.newName !== undefined

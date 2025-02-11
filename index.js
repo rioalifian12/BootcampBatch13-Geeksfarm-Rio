@@ -33,10 +33,6 @@ const main = async () => {
           phone: argv.phone,
           email: argv.email || "",
         };
-
-        // const data = validation.getInput(dataContact.name);
-        // console.log(data);
-
         contacts.saveData(dataContact);
       },
     })
