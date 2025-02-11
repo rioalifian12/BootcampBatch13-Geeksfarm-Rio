@@ -31,9 +31,11 @@ const main = async () => {
         const dataContact = {
           name: argv.name,
           phone: argv.phone,
-          email: argv.email,
+          email: argv.email || "",
         };
-        console.log(dataContact);
+
+        // const data = validation.getInput(dataContact.name);
+        // console.log(data);
 
         contacts.saveData(dataContact);
       },
@@ -60,7 +62,7 @@ const main = async () => {
       },
     })
     .command({
-      command: "update <name>",
+      command: "update",
       describe: "update contact",
       builder: {
         name: {
@@ -68,9 +70,29 @@ const main = async () => {
           demandOption: true,
           type: "string",
         },
+        newName: {
+          describe: "contact new name",
+          demandOption: false,
+          type: "string",
+        },
+        newPhone: {
+          describe: "contact new phone",
+          demandOption: false,
+          type: "string",
+        },
+        newEmail: {
+          describe: "contact new email",
+          demandOption: false,
+          type: "string",
+        },
       },
       handler(argv) {
-        contacts.updateData(argv.name);
+        contacts.updateData(
+          argv.name,
+          argv.newName,
+          argv.newPhone,
+          argv.newEmail
+        );
       },
     })
     .command({
