@@ -50,6 +50,7 @@ const saveData = (data) => {
 
   contacts.push(data);
   fs.writeFileSync(path.dataPath, JSON.stringify(contacts));
+  console.log("Data berhasil di tambah!");
 };
 
 // function untuk membaca contacts data didalam file json

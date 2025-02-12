@@ -9,5 +9,6 @@
   { "name": "Maya", "phone": "088899977766", "email": "maya@example.com" },
   { "name": "Joko", "phone": "086677889900", "email": "joko@example.com" },
   { "name": "Rio AS", "phone": "082222000999", "email": "rio12@gg.com" },
-  { "name": "Rio Alifian S", "phone": "082210023129", "email": "" }
+  { "name": "Rio Alifian S", "phone": "082210023129", "email": "" },
+  { "name": "Rio", "phone": "082210023129", "email": "" }
 ]
