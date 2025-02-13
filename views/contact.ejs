@@ -1,0 +1,25 @@
+<%- contentFor('body') %>
+
+<div class="container">
+  <h1>This is Contact Page</h1>
+  <% if (cont.length < 1) { %>
+  <p>Data kontak kosong</p>
+  <% } else { %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+      </tr>
+    </thead>
+    <% cont.forEach(contact => { %>
+
+    <tbody>
+      <tr>
+        <td><%= contact.name %></td>
+        <td><%= contact.email %></td>
+      </tr>
+      <% })} %>
+    </tbody>
+  </table>
+</div>
