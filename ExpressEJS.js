@@ -1,16 +1,13 @@
 const express = require("express");
-const expressLayouts = require("express-ejs-layouts");
-const morgan = require("morgan");
+var expressLayouts = require("express-ejs-layouts");
 
 const app = express();
 const port = 3000;
-const cont = require("./data/contacts.json");
 
 // template engine ejs. File html diubah ekstensinya menjadi .ejs
 app.set("view engine", "ejs");
 
 app.use(expressLayouts);
-app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   res.render("index", { nama: "Rio AS", title: "Home Page" });
@@ -21,13 +18,19 @@ app.get("/about", (req, res) => {
 });
 
 app.get("/contact", (req, res) => {
+  cont = [
+    { name: "Rio", email: "rio@gmail.com" },
+    { name: "Ali", email: "ali@gmail.com" },
+    { name: "Fian", email: "fian@gmail.com" },
+    { name: "Santoso", email: "santoso@gmail.com" },
+  ];
   res.render("contact", { cont, title: "Contact Page" });
 });
 
-app.get("/contact/:idContact", (req, res) => {
-  const id = req.params.idContact;
-  const contactDetail = cont.find((value) => value.name === id);
-  res.render("contactDetail", { contactDetail, title: "Contact Detail Page" });
+app.get("/product/:idProduct", (req, res) => {
+  res.send(
+    `Product Page with ID: ${req.params.idProduct} <br> Category ID: ${req.query.idCategory}`
+  );
 });
 
 app.use("/", (req, res) => {

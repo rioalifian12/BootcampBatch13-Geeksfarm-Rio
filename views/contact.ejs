@@ -1,7 +1,7 @@
 <%- contentFor('body') %>
 
 <div class="container">
-  <h1>This is Contact Page</h1>
+  <h1 class="mb-5">This is Contact Page</h1>
   <% if (cont.length < 1) { %>
   <p>Data kontak kosong</p>
   <% } else { %>
@@ -9,15 +9,25 @@
     <thead>
       <tr>
         <th scope="col">Name</th>
+        <th scope="col">Phone</th>
         <th scope="col">Email</th>
+        <th scope="col">Action</th>
       </tr>
     </thead>
     <% cont.forEach(contact => { %>
-
     <tbody>
       <tr>
         <td><%= contact.name %></td>
+        <td><%= contact.phone %></td>
         <td><%= contact.email %></td>
+        <td>
+          <a
+            class="btn btn-primary"
+            href="contact/<%= contact.name %>"
+            role="button"
+            >Detail</a
+          >
+        </td>
       </tr>
       <% })} %>
     </tbody>
