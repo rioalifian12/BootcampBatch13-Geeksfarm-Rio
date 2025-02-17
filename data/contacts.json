@@ -1,14 +1,1 @@
-[
-  { "name": "oki", "phone": "081234567890", "email": "andi@example.com" },
-  { "name": "Budi", "phone": "085678912345", "email": "budi@example.com" },
-  { "name": "Siti", "phone": "087654321098", "email": "siti@example.com" },
-  { "name": "Dewi", "phone": "082233445566", "email": "dewi@example.com" },
-  { "name": "Rizky", "phone": "089876543210", "email": "rizky@example.com" },
-  { "name": "Tina", "phone": "081122334455", "email": "tina@example.com" },
-  { "name": "Faisal", "phone": "083344556677", "email": "faisal@example.com" },
-  { "name": "Maya", "phone": "088899977766", "email": "maya@example.com" },
-  { "name": "Joko", "phone": "086677889900", "email": "joko@example.com" },
-  { "name": "Rio AS", "phone": "082222000999", "email": "rio12@gg.com" },
-  { "name": "Rio Alifian S", "phone": "082210023129", "email": "" },
-  { "name": "Rio", "phone": "082210023129", "email": "" }
-]
+[{"name":"oki","phone":"081234567890","email":"andi@example.com"},{"name":"Budi","phone":"085678912345","email":"budi@example.com"},{"name":"Siti","phone":"087654321098","email":"siti@example.com"},{"name":"Dewi","phone":"082233445566","email":"dewi@example.com"},{"name":"Rizky","phone":"089876543210","email":"rizky@example.com"},{"name":"Tina","phone":"081122334455","email":"tina@example.com"},{"name":"Faisal","phone":"083344556677","email":"faisal@example.com"},{"name":"Maya","phone":"088899977766","email":"maya@example.com"},{"name":"Joko","phone":"086677889900","email":"joko@example.com"}]

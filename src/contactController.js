@@ -2,6 +2,7 @@ const fs = require("fs");
 const validator = require("validator");
 
 const path = require("./createDir");
+const { get } = require("http");
 
 const getData = () => {
   const file = fs.readFileSync(path.dataPath, "utf-8");
@@ -55,19 +56,18 @@ const saveData = (data) => {
 
 // function untuk membaca contacts data didalam file json
 const readData = () => {
-  const file = fs.readFileSync(path.dataPath, "utf-8");
-  const contacts = JSON.parse(file);
+  const contacts = getData();
+
   if (contacts.length < 1) {
     return console.log("Data kosong!");
   }
-  console.log(contacts);
+  return contacts;
 };
 // function untuk membaca detail contacts data didalam file json
 
-const readDetailData = (name) => {
-  const file = fs.readFileSync(path.dataPath, "utf-8");
-  const contacts = JSON.parse(file);
-  const contactDetail = contacts.find((value) => value.name === name);
+const readDetailData = (id) => {
+  const contacts = getData();
+  const contactDetail = contacts.find((value) => value.name === id);
   if (!contactDetail) {
     return console.log("Data tidak ada!");
   }
@@ -76,7 +76,7 @@ const readDetailData = (name) => {
     return console.log("Data kosong!");
   }
 
-  console.log(contactDetail);
+  return contactDetail;
 };
 
 // function untuk mengubah contacts data kedalam file json
@@ -169,4 +169,5 @@ module.exports = {
   readDetailData,
   updateData,
   deleteData,
+  getData,
 };

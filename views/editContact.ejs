@@ -1,0 +1,51 @@
+<%- contentFor('body') %>
+
+<div class="container">
+  <div class="card">
+    <h5 class="card-header">Edit Contact</h5>
+    <div class="card-body">
+      <div class="mb-3">
+        <form action="/edit" method="post">
+          <label for="name" class="form-label">Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            value="<%= contactDetail.name %>"
+            required
+          />
+
+          <label for="phone" class="form-label mt-2">Phone Number</label>
+          <input
+            type="tel"
+            class="form-control"
+            id="phone"
+            name="phone"
+            value="<%= contactDetail.phone %>"
+            required
+          />
+
+          <label for="email" class="form-label mt-2">Email address</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            value="<%= contactDetail.email %>"
+          />
+
+          <button class="btn btn-primary mt-3" type="submit">
+            Edit
+            <input
+              type="hidden"
+              id="edit"
+              name="edit"
+              value="<%= contactDetail.name %>"
+            />
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
