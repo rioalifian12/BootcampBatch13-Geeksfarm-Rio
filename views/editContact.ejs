@@ -6,12 +6,23 @@
     <div class="card-body">
       <div class="mb-3">
         <form action="/edit" method="post">
+          <% if (errors.length > 0) { %> <% errors.forEach(err => { %>
+          <p class="text-danger"><%= err.msg %></p>
+          <% }) %> <% } %>
           <label for="name" class="form-label">Name</label>
           <input
             type="text"
             class="form-control"
             id="name"
             name="name"
+            value="<%= cont.name %>"
+            required
+          />
+          <input
+            type="hidden"
+            class="form-control"
+            id="oldName"
+            name="oldName"
             value="<%= cont.name %>"
             required
           />

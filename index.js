@@ -1,9 +1,8 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const morgan = require("morgan");
-const fs = require("fs");
 const dataContact = require("./src/contactController");
-const path = require("./src/createDir");
+const { body, validationResult } = require("express-validator");
 
 const app = express();
 const port = 3000;
@@ -11,6 +10,7 @@ const port = 3000;
 // template engine ejs. File html diubah ekstensinya menjadi .ejs
 app.set("view engine", "ejs");
 
+app.use(express.json());
 app.use(expressLayouts);
 app.use(express.static("public"));
 app.use(morgan("dev"));
@@ -37,36 +37,91 @@ app.get("/contact/detail/:idContact", (req, res) => {
 
 app.get("/contact/add", (req, res) => {
   const cont = dataContact.readData();
-  res.render("addContact", { cont, title: "Add Contact Page" });
+  res.render("addContact", {
+    cont,
+    errors: {},
+    title: "Add Contact Page",
+  });
 });
 
-app.post("/create", (req, res) => {
-  const data = {
-    name: req.body.name,
-    phone: req.body.phone,
-    email: req.body.email,
-  };
-  dataContact.saveData(data);
-  res.redirect("contact");
-});
+app.post(
+  "/create",
+  [
+    body("name").custom((value, { req }) => {
+      const name = req.body.name;
+      const contacts = dataContact.getData();
+      const contactDetail = contacts.find((value) => value.name === name);
+      if (!contactDetail) {
+        return true;
+      }
+
+      if (contactDetail.name === name) {
+        throw new Error("Name already exist");
+      }
+    }),
+    body("phone", "Phone number is not valid").isMobilePhone(["id-ID"]),
+    body("email", "Email is not valid").isEmail(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render("addContact", { errors: errors.array() });
+    }
+    const data = {
+      name: req.body.name,
+      phone: req.body.phone,
+      email: req.body.email,
+    };
+    dataContact.saveData(data);
+    res.redirect("contact");
+  }
+);
 
 app.get("/contact/edit/:idContact", (req, res) => {
   const id = req.params.idContact;
   const cont = dataContact.readDetailData(id);
-  res.render("editContact", { cont, title: "Edit Contact Page" });
+  res.render("editContact", { cont, errors: {}, title: "Edit Contact Page" });
 });
 
-app.post("/edit", (req, res) => {
-  const data = {
-    name: req.body.name,
-    phone: req.body.phone,
-    email: req.body.email,
-  };
+app.post(
+  "/edit",
+  [
+    body("name", "Name already exist").custom((value, { req }) => {
+      const name = req.body.name;
+      const oldName = req.body.oldName;
+      const contacts = dataContact.getData();
+      const contactDetail = contacts.find((value) => value.name === name);
+      if (!contactDetail) {
+        return true;
+      }
+      if (value === oldName) {
+        return true;
+      }
 
-  const id = req.body.edit;
-  dataContact.updateData(id, data);
-  res.redirect("contact");
-});
+      if (contactDetail.name === name) {
+        throw new Error("Name already exist");
+      }
+    }),
+    body("phone", "Phone number is not valid").isMobilePhone(["id-ID"]),
+    body("email", "Email is not valid").isEmail(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    const id = req.body.edit;
+    const cont = dataContact.readDetailData(id);
+    if (!errors.isEmpty()) {
+      return res.render("editContact", { cont, errors: errors.array() });
+    }
+    const data = {
+      name: req.body.name,
+      phone: req.body.phone,
+      email: req.body.email,
+    };
+
+    dataContact.updateData(id, data);
+    res.redirect("contact");
+  }
+);
 
 app.post("/delete", (req, res) => {
   const id = req.body.delete;
