@@ -1,8 +1,10 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const morgan = require("morgan");
-const dataContact = require("./src/contactController");
 const { body, validationResult } = require("express-validator");
+
+const dataContact = require("./src/contactController");
+const pool = require("./db");
 
 const app = express();
 const port = 3000;
@@ -24,108 +26,151 @@ app.get("/about", (req, res) => {
   res.render("about", { title: "About Page" });
 });
 
-app.get("/contact", (req, res) => {
-  const cont = dataContact.readData();
-  res.render("contact", { cont, title: "Contact Page" });
+app.get("/contact", async (req, res) => {
+  try {
+    const cont = await pool.query(`SELECT * FROM contact ORDER BY name ASC`);
+    res.render("contact", { cont: cont.rows, title: "Contact Page" });
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
-app.get("/contact/detail/:idContact", (req, res) => {
-  const id = req.params.idContact;
-  const cont = dataContact.readDetailData(id);
-  res.render("contactDetail", { cont, title: "Contact Detail Page" });
+app.get("/contact/detail/:idContact", async (req, res) => {
+  try {
+    const id = req.params.idContact;
+    const cont = await pool.query(`SELECT * FROM contact WHERE name = '${id}'`);
+    res.render("contactDetail", {
+      cont: cont.rows[0],
+      title: "Contact Detail Page",
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
-app.get("/contact/add", (req, res) => {
-  const cont = dataContact.readData();
-  res.render("addContact", {
-    cont,
-    errors: {},
-    title: "Add Contact Page",
-  });
+app.get("/contact/add", async (req, res) => {
+  try {
+    res.render("addContact", {
+      errors: {},
+      title: "Add Contact Page",
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
 app.post(
   "/create",
   [
-    body("name").custom((value, { req }) => {
-      const name = req.body.name;
-      const contacts = dataContact.getData();
-      const contactDetail = contacts.find((value) => value.name === name);
+    body("name").custom(async (value) => {
+      const cont = await pool.query(`SELECT * FROM contact ORDER BY name ASC`);
+      const contactDetail = await pool.query(
+        `SELECT * FROM contact WHERE name = '${value}'`
+      );
+
       if (!contactDetail) {
         return true;
       }
 
-      if (contactDetail.name === name) {
+      if (cont.name === contactDetail) {
         throw new Error("Name already exist");
       }
     }),
     body("phone", "Phone number is not valid").isMobilePhone(["id-ID"]),
     body("email", "Email is not valid").isEmail(),
   ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.render("addContact", { errors: errors.array() });
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.render("addContact", { errors: errors.array() });
+      }
+      const data = {
+        name: req.body.name,
+        phone: req.body.phone,
+        email: req.body.email,
+      };
+      await pool.query(
+        `INSERT INTO contact VALUES ('${data.name}','${data.phone}','${data.email}') RETURNING *`
+      );
+      res.redirect("contact");
+    } catch (error) {
+      console.log(error.message);
     }
-    const data = {
-      name: req.body.name,
-      phone: req.body.phone,
-      email: req.body.email,
-    };
-    dataContact.saveData(data);
-    res.redirect("contact");
   }
 );
 
-app.get("/contact/edit/:idContact", (req, res) => {
-  const id = req.params.idContact;
-  const cont = dataContact.readDetailData(id);
-  res.render("editContact", { cont, errors: {}, title: "Edit Contact Page" });
+app.get("/contact/edit/:idContact", async (req, res) => {
+  try {
+    const id = req.params.idContact;
+    const cont = await pool.query(`SELECT * FROM contact WHERE name = '${id}'`);
+    res.render("editContact", {
+      cont: cont.rows[0],
+      errors: {},
+      title: "Edit Contact Page",
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 });
 
 app.post(
   "/edit",
   [
-    body("name", "Name already exist").custom((value, { req }) => {
+    body("name", "Name already exist").custom(async (value, { req }) => {
       const name = req.body.name;
       const oldName = req.body.oldName;
-      const contacts = dataContact.getData();
-      const contactDetail = contacts.find((value) => value.name === name);
+      const contactDetail = await pool.query(
+        `SELECT * FROM contact WHERE name = '${name}'`
+      );
       if (!contactDetail) {
         return true;
       }
       if (value === oldName) {
         return true;
       }
+      console.log(contactDetail.rows[0]);
+      console.log(name);
 
-      if (contactDetail.name === name) {
+      if (contactDetail.rows.length > 0) {
         throw new Error("Name already exist");
       }
     }),
     body("phone", "Phone number is not valid").isMobilePhone(["id-ID"]),
     body("email", "Email is not valid").isEmail(),
   ],
-  (req, res) => {
-    const errors = validationResult(req);
-    const id = req.body.edit;
-    const cont = dataContact.readDetailData(id);
-    if (!errors.isEmpty()) {
-      return res.render("editContact", { cont, errors: errors.array() });
-    }
-    const data = {
-      name: req.body.name,
-      phone: req.body.phone,
-      email: req.body.email,
-    };
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      const id = req.body.edit;
+      const cont = await pool.query(
+        `SELECT * FROM contact WHERE name = '${id}'`
+      );
 
-    dataContact.updateData(id, data);
-    res.redirect("contact");
+      if (!errors.isEmpty()) {
+        return res.render("editContact", {
+          cont: cont.rows[0],
+          errors: errors.array(),
+        });
+      }
+      const data = {
+        name: req.body.name,
+        phone: req.body.phone,
+        email: req.body.email,
+      };
+      await pool.query(
+        `UPDATE contact SET name = '${data.name}', phone = '${data.phone}', email = '${data.email}' WHERE name = '${id}'`
+      );
+      res.redirect("contact");
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 );
 
-app.post("/delete", (req, res) => {
+app.post("/delete", async (req, res) => {
   const id = req.body.delete;
-  dataContact.deleteData(id);
+  await pool.query(`DELETE FROM contact WHERE name = '${id}'`);
   res.redirect("contact");
 });
 
