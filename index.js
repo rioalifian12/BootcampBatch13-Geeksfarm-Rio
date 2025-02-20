@@ -3,7 +3,6 @@ const expressLayouts = require("express-ejs-layouts");
 const morgan = require("morgan");
 const { body, validationResult } = require("express-validator");
 
-const dataContact = require("./src/contactController");
 const pool = require("./db");
 
 const app = express();
@@ -51,7 +50,8 @@ app.get("/contact/detail/:idContact", async (req, res) => {
 app.get("/contact/add", async (req, res) => {
   try {
     res.render("addContact", {
-      errors: {},
+      results: {},
+      data: {},
       title: "Add Contact Page",
     });
   } catch (error) {
@@ -63,7 +63,6 @@ app.post(
   "/create",
   [
     body("name").custom(async (value) => {
-      const cont = await pool.query(`SELECT * FROM contact ORDER BY name ASC`);
       const contactDetail = await pool.query(
         `SELECT * FROM contact WHERE name = '${value}'`
       );
@@ -72,26 +71,28 @@ app.post(
         return true;
       }
 
-      if (cont.name === contactDetail) {
+      if (contactDetail.rows.length > 0) {
         throw new Error("Name already exist");
       }
     }),
     body("phone", "Phone number is not valid").isMobilePhone(["id-ID"]),
-    body("email", "Email is not valid").isEmail(),
+    body("email", "Email is not valid")
+      .optional({ checkFalsy: true })
+      .isEmail(),
   ],
   async (req, res) => {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.render("addContact", { errors: errors.array() });
-      }
+      const results = validationResult(req);
       const data = {
         name: req.body.name,
         phone: req.body.phone,
-        email: req.body.email,
+        email: req.body.email || "",
       };
+      if (!results.isEmpty()) {
+        return res.render("addContact", { results: results.array(), data });
+      }
       await pool.query(
-        `INSERT INTO contact VALUES ('${data.name}','${data.phone}','${data.email}') RETURNING *`
+        `INSERT INTO contact (name, phone, email) VALUES ('${data.name}','${data.phone}','${data.email}') RETURNING *`
       );
       res.redirect("contact");
     } catch (error) {
@@ -106,7 +107,8 @@ app.get("/contact/edit/:idContact", async (req, res) => {
     const cont = await pool.query(`SELECT * FROM contact WHERE name = '${id}'`);
     res.render("editContact", {
       cont: cont.rows[0],
-      errors: {},
+      results: {},
+      data: {},
       title: "Edit Contact Page",
     });
   } catch (error) {
@@ -117,47 +119,45 @@ app.get("/contact/edit/:idContact", async (req, res) => {
 app.post(
   "/edit",
   [
-    body("name", "Name already exist").custom(async (value, { req }) => {
+    body("name").custom(async (value, { req }) => {
       const name = req.body.name;
       const oldName = req.body.oldName;
       const contactDetail = await pool.query(
         `SELECT * FROM contact WHERE name = '${name}'`
       );
-      if (!contactDetail) {
+
+      if (!contactDetail || value === oldName) {
         return true;
       }
-      if (value === oldName) {
-        return true;
-      }
-      console.log(contactDetail.rows[0]);
-      console.log(name);
 
       if (contactDetail.rows.length > 0) {
         throw new Error("Name already exist");
       }
     }),
     body("phone", "Phone number is not valid").isMobilePhone(["id-ID"]),
-    body("email", "Email is not valid").isEmail(),
+    body("email", "Email is not valid")
+      .optional({ checkFalsy: true })
+      .isEmail(),
   ],
   async (req, res) => {
     try {
-      const errors = validationResult(req);
+      const results = validationResult(req);
       const id = req.body.edit;
       const cont = await pool.query(
         `SELECT * FROM contact WHERE name = '${id}'`
       );
-
-      if (!errors.isEmpty()) {
-        return res.render("editContact", {
-          cont: cont.rows[0],
-          errors: errors.array(),
-        });
-      }
       const data = {
         name: req.body.name,
         phone: req.body.phone,
-        email: req.body.email,
+        email: req.body.email || "",
       };
+      if (!results.isEmpty()) {
+        return res.render("editContact", {
+          cont: cont.rows[0],
+          results: results.array(),
+          data,
+        });
+      }
       await pool.query(
         `UPDATE contact SET name = '${data.name}', phone = '${data.phone}', email = '${data.email}' WHERE name = '${id}'`
       );
