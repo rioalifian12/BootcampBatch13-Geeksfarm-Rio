@@ -4,6 +4,7 @@ import Comment from "./Comment";
 import { generateComments } from "./generateComment";
 import Clock from "./Clock";
 import Counting from "./buttonClick";
+import Input from "./Input";
 
 class App extends Component {
   constructor(props) {
@@ -19,16 +20,19 @@ class App extends Component {
     return (
       <div>
         <Nav />
-        <h1>{message}</h1>
-        {/* <input type="number" min={5} style={{ border: "3px solid red" }} />
+        <div className="container">
+          <h1>{message}</h1>
+          {/* <input type="number" min={5} style={{ border: "3px solid red" }} />
         <h1>{new Date().toLocaleTimeString()}</h1> */}
-        <Counting />
-        <Clock />
-        <div className="ui comments">
-          <h3 className="ui dividing header">Comments</h3>
-          {this.state.comments.map((comment, index) => (
-            <Comment key={index} {...comment} />
-          ))}
+          <Counting />
+          <Clock />
+          <Input />
+          <div className="ui comments">
+            <h3 className="ui dividing header">Comments</h3>
+            {this.state.comments.map((comment, index) => (
+              <Comment key={index} {...comment} />
+            ))}
+          </div>
         </div>
       </div>
     );
