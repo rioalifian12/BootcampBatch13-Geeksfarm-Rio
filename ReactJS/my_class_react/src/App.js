@@ -20,7 +20,7 @@ class App extends Component {
     return (
       <div>
         <Nav />
-        <div className="container">
+        <div>
           <h1>{message}</h1>
           {/* <input type="number" min={5} style={{ border: "3px solid red" }} />
         <h1>{new Date().toLocaleTimeString()}</h1> */}

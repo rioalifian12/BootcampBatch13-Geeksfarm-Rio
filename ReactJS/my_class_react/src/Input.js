@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
+import ImageList from "./ImageList";
 
 class Input extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: "", data: [] };
+    this.state = { value: "", data: [], height: 0 };
 
     this.handleChange = this.handleChange.bind(this);
     // this.handleSubmit = this.handleSubmit.bind(this);
@@ -34,8 +35,10 @@ class Input extends Component {
   }
 
   render() {
+    console.log(this.state.height);
+
     return (
-      <div className="container">
+      <div className="m-5 mb-4">
         <div className="card">
           <h5 className="card-header">Image Search</h5>
           <div className="card-body">
@@ -56,14 +59,19 @@ class Input extends Component {
             </div>
           </div>
         </div>
-        {this.state.data.map((img) => (
-          <img
-            key={img.id}
-            src={img.urls.regular}
-            alt={img.alt_description}
-            style={{ height: "100px" }}
-          />
-        ))}
+        <div
+          style={{
+            columns: 4,
+          }}
+        >
+          {this.state.data.map((img) => (
+            <ImageList
+              key={img.id}
+              urlImage={img.urls.regular}
+              alt={img.alt_description}
+            />
+          ))}
+        </div>
       </div>
     );
   }
