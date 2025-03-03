@@ -38,7 +38,7 @@ class Input extends Component {
     console.log(this.state.height);
 
     return (
-      <div className="m-5 mb-4">
+      <div className="mt-3">
         <div className="card">
           <h5 className="card-header">Image Search</h5>
           <div className="card-body">
