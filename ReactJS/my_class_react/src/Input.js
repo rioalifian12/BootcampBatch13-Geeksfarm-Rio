@@ -59,11 +59,7 @@ class Input extends Component {
             </div>
           </div>
         </div>
-        <div
-          style={{
-            columns: 4,
-          }}
-        >
+        <div style={{ columns: 4 }}>
           {this.state.data.map((img) => (
             <ImageList
               key={img.id}

@@ -12,10 +12,9 @@ class Input extends Component {
   }
 
   render() {
-    console.log(this.imageRef);
-
     return (
       <div
+        className="mb-4"
         style={{
           height: this.height,
         }}
@@ -23,6 +22,7 @@ class Input extends Component {
         <img
           src={this.props.urlImage}
           alt={this.props.alt}
+          className="img-fluid"
           ref={this.imageRef}
         />
       </div>
