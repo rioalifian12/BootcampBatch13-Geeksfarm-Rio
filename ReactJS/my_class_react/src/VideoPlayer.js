@@ -5,7 +5,7 @@ import VideoList from "./VideoList";
 class VideoPlayer extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: "", data: [] };
+    this.state = { value: "", data: [], selectedVideo: null };
 
     this.handleChange = this.handleChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
