@@ -9,6 +9,7 @@ class VideoPlayer extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.onSearchSubmit = this.onSearchSubmit.bind(this);
+    this.onVideoSelect = this.onVideoSelect.bind(this);
   }
 
   handleChange(event) {
@@ -21,14 +22,23 @@ class VideoPlayer extends Component {
       const result = await axios.get(
         `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${this.state.value}&key=AIzaSyDxtZQO-Ooruy3bGnjJcORvNWDplQqHX1M`
       );
-      this.setState({ data: result.data.items });
+      this.setState({
+        data: result.data.items,
+        selectedVideo: result.data.items[0],
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }
 
+  onVideoSelect(video) {
+    this.setState({ selectedVideo: video });
+  }
+
   render() {
-    const { data } = this.state;
+    const { data, selectedVideo } = this.state;
+    const mainVideo = selectedVideo || (data.length > 0 ? data[0] : null);
+
     return (
       <div className="mt-3">
         <div className="card">
@@ -56,27 +66,27 @@ class VideoPlayer extends Component {
             <div className="col-md-8">
               <div className="ratio ratio-16x9">
                 <iframe
-                  src={`https://www.youtube.com/embed/${data[0].id.videoId}`}
-                  title={data[0].snippet.title}
+                  src={`https://www.youtube.com/embed/${mainVideo.id.videoId}`}
+                  title={mainVideo.snippet.title}
                   allowFullScreen
                 ></iframe>
               </div>
 
               <div className="card mt-3">
                 <div className="card-body">
-                  <h3 className="card-title">{data[0].snippet.title}</h3>
-                  <p className="card-text">{data[0].snippet.description}</p>
+                  <h3 className="card-title">{mainVideo.snippet.title}</h3>
+                  <p className="card-text">{mainVideo.snippet.description}</p>
                 </div>
               </div>
             </div>
           )}
 
           <div className="col-md-4">
-            {data.map((vid, index) => (
+            {data.map((video, index) => (
               <VideoList
                 key={index}
-                url={vid.snippet.thumbnails.default.url}
-                title={vid.snippet.title}
+                video={video}
+                onVideoSelect={this.onVideoSelect}
               />
             ))}
           </div>
