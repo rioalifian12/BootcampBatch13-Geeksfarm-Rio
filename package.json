@@ -15,12 +15,13 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon contactApp.js",
     "fol": "ls",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@redux-devtools/extension": "^3.3.0",
+    "cors": "^2.8.5",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "express-ejs-layouts": "^2.5.1",
