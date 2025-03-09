@@ -1,56 +1,67 @@
 import React from "react";
+import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { addContact } from "../services/ServiceContact";
 
 const AddContact = () => {
+  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
+
+  const onSubmit = async (contact) => {
+    const response = await addContact(contact);
+    if (response) {
+      navigate("/contact");
+    }
+  };
+
   return (
-    <div className="container mt-3 w-50">
-      <h1 className="text-center mb-3">Contact Form</h1>
+    <div className="container">
+      <h1 className="my-3">Add New Contact</h1>
       <div className="card">
         <div className="card-body">
-          <div className="mb-3">
-            <form action="/create" method="post">
-              {/* <% if (results.length > 0) { %> <% results.forEach(result => { %>
-          <p className="text-danger"><%= result.msg %></p>
-          <% }) %> <% } %> */}
-              <label for="name" className="form-label fw-semibold">
-                Name
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="m-3">
+              <label htmlFor="name" className="form-label fw-semibold">
+                Name <span className="text-danger">*</span>
               </label>
               <input
                 type="text"
                 className="form-control"
                 id="name"
-                name="name"
-                value="<%= data.name %>"
                 required
+                {...register("name", { required: true })}
               />
+            </div>
 
-              <label for="phone" className="form-label fw-semibold mt-3">
-                Phone Number
+            <div className="m-3">
+              <label htmlFor="phone" className="form-label fw-semibold">
+                Phone Number <span className="text-danger">*</span>
               </label>
               <input
                 type="tel"
                 className="form-control"
                 id="phone"
-                name="phone"
-                value="<%= data.phone %>"
                 required
+                {...register("phone", { required: true })}
               />
+            </div>
 
-              <label for="email" className="form-label fw-semibold mt-3">
+            <div className="m-3">
+              <label htmlFor="email" className="form-label fw-semibold">
                 Email Address
               </label>
               <input
                 type="email"
                 className="form-control"
                 id="email"
-                name="email"
-                value="<%= data.email %>"
+                {...register("email", { required: false })}
               />
+            </div>
 
-              <button className="btn btn-primary mt-3" type="submit">
-                Submit
-              </button>
-            </form>
-          </div>
+            <button className="btn btn-primary m-3" type="submit">
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import AddContact from "../pages/AddContact";
 import DetailContact from "../pages/DetailContact";
+import EditContact from "../pages/EditContact";
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/contact/:name" element={<DetailContact />} />
         <Route path="/contact/add" element={<AddContact />} />
+        <Route path="/contact/edit/:name" element={<EditContact />} />
       </Routes>
     </Router>
   );

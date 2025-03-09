@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useParams } from "react-router";
+import { NavLink, useNavigate, useParams } from "react-router";
 import { fetchContactByName } from "../services/ServiceContact";
 
 const DetailContact = () => {
   const [contactDetail, setContactDetail] = useState({});
   const { name } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getContactByName(name);
-  }, [name]);
-
-  //   fetch contact by name
-  const getContactByName = async (name) => {
-    const contact = await fetchContactByName(name);
-    setContactDetail(contact);
-  };
+    const getContactByName = async () => {
+      const contact = await fetchContactByName(name);
+      if (contact) {
+        setContactDetail(contact);
+      } else {
+        console.log("Contact not found");
+        navigate("/contact");
+      }
+    };
+    getContactByName();
+  }, [name, setContactDetail, navigate]);
 
   return (
     <div className="container">
@@ -35,12 +39,7 @@ const DetailContact = () => {
           </tr>
         </tbody>
       </table>
-      <NavLink
-        to={"/contact"}
-        className="btn btn-primary"
-        role="button"
-        style={{ width: "150px" }}
-      >
+      <NavLink to={"/contact"} className="btn btn-primary" role="button">
         Back
       </NavLink>
     </div>
