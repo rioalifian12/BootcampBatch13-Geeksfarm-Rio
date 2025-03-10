@@ -28,7 +28,7 @@ export const addContact = async (contact) => {
     return response.data.contact;
   } catch (error) {
     console.log(`Error adding contact: ${error}`);
-    return null;
+    throw error;
   }
 };
 
@@ -38,7 +38,7 @@ export const editContact = async (contact) => {
     return response.data;
   } catch (error) {
     console.log(`Error editing contact by name: ${error}`);
-    return null;
+    throw error;
   }
 };
 
